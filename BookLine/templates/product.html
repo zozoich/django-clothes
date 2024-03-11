@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="book_card">
+            <div class="photo_card">
+                <img src="/files/{{ product.photo_file }}" alt="{{ product.photo_file }}" class="img-thumbnail">
+            </div>
+            <div class="text_card">
+                <h1>{{ product.name }}</h1>
+                <p class="text"><br>
+                <b>Цена:</b> {{ product.price }}<br>
+                <b>Автор:</b> {{ product.country }}<br>
+                <b>Год издания:</b> {{ product.year }}<br>
+                <b>Категория:</b> {{ product.category }}<br>
+                <b> Описание<br></b>
+                 {{product.opisanie}}</p>
+                 <div class="buttom">
+                    {% if user.is_authenticated %}
+                    <a href="#" class="cart-text-color button-cart"  onclick="toCart(this,{{ product.pk }})"style="text-decoration: none;"> В корзину</a>
+                     {% endif %}
+                </div>
+            </div>
+
+            
+        </div>
+        
+    </div>
+    <script>
+        toCart = async (target, pk) => {
+            const res = await fetch(`/to_cart/${pk}`).then(res => res.json());
+            const message = document.createElement('div');
+            if (res.count) {
+                // message.innerHTML = `Товар добавлен в корзину`;
+                alert(`Товар добавлен в корзину`)
+            } else {
+                // message.innerHTML = 'Больше нельзя добавить';
+                alert('Больше нельзя добавить')
+            }
+            target.parentElement.append(message);
+            setTimeout(() => message.remove(), 1000);
+
+        }
+    </script>
+{% endblock %}

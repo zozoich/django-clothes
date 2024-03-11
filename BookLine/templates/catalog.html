@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/files/Slider/1676719159_catherineasquithgallery-com-p-zelenii-fon-dlya-shapki-kanala-143.jpg"
+                    class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="/files/slider/sl.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="/files/slider/sli.png" class="d-block w-100" alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev my-slide" type="button" data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next my-slide" type="button" data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+<div class="container">
+    <h1>Каталог</h1>
+    <div class="my_dropdown">
+        <div class="dropdown">
+            <button  class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Категории
+            </button>
+            <ul class="dropdown-menu">
+                {% if not request.GET.category %}
+                <li><a class="dropdown-item" href="">Все</a></li>
+                {% else %}
+                <li><a class="dropdown-item" href="{% url 'catalog' %}?order_by={{ request.GET.order_by }}">Все</a></li>
+                {% endif %}
+                {% for item in category %}
+                <li><a class="dropdown-item" href="{% url 'catalog' %}?category={{ item.pk }}&order_by={{ request.GET.order_by }}">{{ item.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <p> {% if current_category %}
+            {{ current_category }}
+            {%endif%}
+        </p>
+    </div>
+   
+    <!-- {% if not request.GET.category %}
+    Все
+    {% else %}
+    <a href="{% url 'catalog' %}?order_by={{ request.GET.order_by }}">Все</a>
+    {% endif %}
+    {% for item in category %}
+    <a href="{% url 'catalog' %}?category={{ item.pk }}&order_by={{ request.GET.order_by }}">{{ item.name }}</a>
+    {% endfor %}
+    </p> -->
+
+         <!--<p>
+        <div>Сортировка:</div>
+        {% if not request.GET.order_by %}
+        Сбросить
+        {% else %}
+        <a href="{% url 'catalog' %}?category={{ request.GET.category }}">Сбросить</a>
+        {% endif %}
+        <a href="{% url 'catalog' %}?order_by=name&category={{ request.GET.category }}">Наименование</a>
+        <a href="{% url 'catalog' %}?order_by=year&category={{ request.GET.category }}">Год производства</a>
+        <a href="{% url 'catalog' %}?order_by=price&category={{ request.GET.category }}">Цена</a>
+        </p> -->
+    <div class="cards">
+         {% for item in products %}
+        <div class="card">
+            <div class="card_top">
+
+                <a href="{{ item.get_absolute_url }}" class="card_img">
+                    <img src="/files/{{ item.photo_file }}" alt="{{ item.photo_file }}" class="img-thumbnail">
+                </a>
+
+                <div class="card_bottom">
+                    <div class="card_name  my-name">
+                        <h5><a href="{{ item.get_absolute_url }}" style="text-decoration: none;color:rgb(0,0,0);">{{ item.name }}</a></h5>
+                    </div>
+                    <div class="my-author">
+                        <span>{{ item.country }}</span>
+                    </div>
+                    <div class="card_prices">
+                        <h5>{{ item.price }} ₽</h5>
+                    </div>
+                    <div class="buttom">
+                        {% if user.is_authenticated %}
+                       <a href="#" class="cart-text-color button-cart"  onclick="toCart(this,{{ item.pk }})"style="text-decoration: none;"> В корзину</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        toCart = async (target, pk) => {
+            const res = await fetch(`/to_cart/${pk}`).then(res => res.json());
+            const message = document.createElement('div');
+            if (res.count) {
+                // message.innerHTML = `Товар добавлен в корзину`;
+                alert(`Товар добавлен в корзину`)
+            } else {
+                // message.innerHTML = 'Больше нельзя добавить';
+                alert('Больше нельзя добавить')
+            }
+            target.parentElement.append(message);
+            setTimeout(() => message.remove(), 1000);
+
+        }
+    </script>
+</div>
+{% endblock %}
